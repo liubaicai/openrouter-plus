@@ -365,7 +365,7 @@
           <td class="num">{{ i + 1 }}</td>
           <td>{{ m.name }}</td>
           <td>
-            <span class="slug-copy" @click="copySlug(m.slug)" :title="'点击复制 ' + m.slug">{{ m.slug }}</span>
+            <span class="slug-copy" @click="copySlug(m._displaySlug)" :title="'点击复制 ' + m._displaySlug">{{ m._displaySlug }}</span>
           </td>
           <td class="num">{{ formatTokens(m._weeklyTokens) }}</td>
           <td class="num">{{ formatCtx(m.context_length) }}</td>
@@ -543,6 +543,7 @@ createApp({
     const filteredModels = computed(() => {
       let list = models.value.map(m => ({
         ...m,
+        _displaySlug: m.endpoint?.model_variant_slug || m.slug,
         _weeklyTokens: getWeekly(m),
         _promptPrice: m.endpoint?.pricing?.prompt,
         _completionPrice: m.endpoint?.pricing?.completion,
@@ -556,7 +557,7 @@ createApp({
 
       if (filterSearch.value) {
         const q = filterSearch.value.toLowerCase();
-        list = list.filter(m => m.name.toLowerCase().includes(q) || m.slug.toLowerCase().includes(q));
+        list = list.filter(m => m.name.toLowerCase().includes(q) || m.slug.toLowerCase().includes(q) || m._displaySlug.toLowerCase().includes(q));
       }
       if (filterInputMod.value) {
         list = list.filter(m => m.input_modalities?.includes(filterInputMod.value));
