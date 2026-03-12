@@ -34,19 +34,31 @@ pnpm dev
 PORT=8080 pnpm start
 ```
 
+## Vercel 部署
+
+1. 将项目推送到 GitHub
+2. 登录 [vercel.com](https://vercel.com) 并导入该仓库
+3. 保持所有设置默认（Vercel 自动检测配置），点击 Deploy
+4. 部署完成后即可访问
+
+每次推送到 main/master 分支会自动触发重新部署。
+
 ## 技术栈
 
 - **后端**：Node.js + Express + TypeScript（代理 OpenRouter API，5 分钟缓存）
 - **前端**：Vue 3（CDN）、原生 CSS
-- 使用 tsx 直接运行 TypeScript，零构建步骤
+- 本地使用 tsx 直接运行 TypeScript；Vercel 使用无服务器函数
 
 ## 项目结构
 
 ```
-├── server.ts          # Express 服务，代理 API
+├── server.ts          # Express 服务（本地开发）
+├── api/
+│   └── models.ts      # Vercel 无服务器函数
 ├── models.ts          # 类型定义
 ├── public/
 │   └── index.html     # 前端单页应用
+├── vercel.json        # Vercel 配置
 ├── tsconfig.json
 ├── package.json
 └── README.md
