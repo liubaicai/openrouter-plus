@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OpenRouter Models</title>
   <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.prod.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       color: #1a1a1a;
@@ -14,6 +20,7 @@
       font-size: 13px;
       line-height: 1.4;
     }
+
     header {
       border-bottom: 1px solid #e0e0e0;
       padding: 14px 24px;
@@ -21,8 +28,34 @@
       align-items: baseline;
       gap: 16px;
     }
-    header h1 { font-size: 16px; font-weight: 600; }
-    .meta { color: #666; font-size: 12px; }
+
+    header h1 {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .meta {
+      color: #666;
+      font-size: 12px;
+    }
+
+    .header-links {
+      margin-left: auto;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .header-links a {
+      font-size: 14px;
+      color: #555;
+      text-decoration: none;
+    }
+
+    .header-links a:hover {
+      color: #1a1a1a;
+      text-decoration: underline;
+    }
 
     .filters {
       padding: 12px 24px;
@@ -33,16 +66,19 @@
       gap: 10px;
       align-items: center;
     }
+
     .filter-group {
       display: flex;
       align-items: center;
       gap: 4px;
     }
+
     .filter-group label {
       font-size: 12px;
       color: #555;
       white-space: nowrap;
     }
+
     .filter-group input,
     .filter-group select {
       border: 1px solid #d0d0d0;
@@ -53,19 +89,33 @@
       color: #1a1a1a;
       outline: none;
     }
+
     .filter-group input:focus,
     .filter-group select:focus {
       border-color: #888;
     }
-    .filter-group input[type="text"] { width: 120px; }
-    .filter-group input.token-input { width: 90px; }
-    .filter-group select { min-width: 60px; }
-    .filter-group select.mod-select { width: 80px; }
+
+    .filter-group input[type="text"] {
+      width: 120px;
+    }
+
+    .filter-group input.token-input {
+      width: 90px;
+    }
+
+    .filter-group select {
+      min-width: 60px;
+    }
+
+    .filter-group select.mod-select {
+      width: 80px;
+    }
 
     .preset-btns {
       display: flex;
       gap: 4px;
     }
+
     .preset-btn {
       border: 1px solid #d0d0d0;
       background: #fff;
@@ -75,7 +125,11 @@
       cursor: pointer;
       color: #555;
     }
-    .preset-btn:hover { background: #f0f0f0; }
+
+    .preset-btn:hover {
+      background: #f0f0f0;
+    }
+
     .preset-btn.active {
       background: #1a1a1a;
       color: #fff;
@@ -91,19 +145,29 @@
       cursor: pointer;
       color: #555;
     }
-    .btn-reset:hover { background: #f0f0f0; }
+
+    .btn-reset:hover {
+      background: #f0f0f0;
+    }
 
     .table-wrap {
       overflow-x: auto;
       max-height: calc(100vh - 120px);
       overflow-y: auto;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
       white-space: nowrap;
     }
-    thead { position: sticky; top: 0; z-index: 2; }
+
+    thead {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
     thead th {
       background: #f5f5f5;
       border-bottom: 2px solid #d0d0d0;
@@ -114,19 +178,42 @@
       color: #333;
       user-select: none;
     }
-    thead th.sortable { cursor: pointer; }
-    thead th.sortable:hover { background: #eaeaea; }
-    thead th .arrow { font-size: 11px; color: #888; }
-    thead th.num { text-align: right; }
+
+    thead th.sortable {
+      cursor: pointer;
+    }
+
+    thead th.sortable:hover {
+      background: #eaeaea;
+    }
+
+    thead th .arrow {
+      font-size: 11px;
+      color: #888;
+    }
+
+    thead th.num {
+      text-align: right;
+    }
 
     tbody td {
       border-bottom: 1px solid #eee;
       padding: 5px 10px;
       font-size: 13px;
     }
-    tbody tr:hover { background: #f9f9f9; }
-    td.num { text-align: right; font-variant-numeric: tabular-nums; }
-    td.center { text-align: center; }
+
+    tbody tr:hover {
+      background: #f9f9f9;
+    }
+
+    td.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    td.center {
+      text-align: center;
+    }
 
     .tag {
       display: inline-block;
@@ -135,14 +222,46 @@
       font-size: 11px;
       margin: 0 2px;
     }
-    .tag-text { background: #e8f0fe; color: #1a56db; }
-    .tag-image { background: #fef3c7; color: #92400e; }
-    .tag-audio { background: #ede9fe; color: #6d28d9; }
-    .tag-file { background: #fee2e2; color: #991b1b; }
-    .tag-default { background: #f3f4f6; color: #374151; }
 
-    .bool-y { color: #16a34a; }
-    .bool-n { color: #999; }
+    .tag-text {
+      background: #e8f0fe;
+      color: #1a56db;
+    }
+
+    .tag-image {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .tag-audio {
+      background: #ede9fe;
+      color: #6d28d9;
+    }
+
+    .tag-file {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .tag-default {
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .tag-more {
+      color: #999;
+      font-size: 11px;
+      margin-left: 2px;
+      cursor: default;
+    }
+
+    .bool-y {
+      color: #16a34a;
+    }
+
+    .bool-n {
+      color: #999;
+    }
 
     .btn-detail {
       border: 1px solid #d0d0d0;
@@ -153,17 +272,21 @@
       cursor: pointer;
       color: #555;
     }
-    .btn-detail:hover { background: #f0f0f0; }
+
+    .btn-detail:hover {
+      background: #f0f0f0;
+    }
 
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,.35);
+      background: rgba(0, 0, 0, .35);
       z-index: 100;
       display: flex;
       align-items: center;
       justify-content: center;
     }
+
     .modal {
       background: #fff;
       border: 1px solid #d0d0d0;
@@ -173,6 +296,7 @@
       display: flex;
       flex-direction: column;
     }
+
     .modal-header {
       display: flex;
       justify-content: space-between;
@@ -182,6 +306,7 @@
       font-weight: 600;
       font-size: 14px;
     }
+
     .modal-close {
       background: none;
       border: none;
@@ -190,12 +315,17 @@
       color: #666;
       padding: 0 4px;
     }
-    .modal-close:hover { color: #1a1a1a; }
+
+    .modal-close:hover {
+      color: #1a1a1a;
+    }
+
     .modal-body {
       overflow: auto;
       padding: 12px 16px;
       flex: 1;
     }
+
     .modal-body pre {
       font-family: "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
       font-size: 12px;
@@ -204,15 +334,34 @@
       word-break: break-all;
     }
 
-    .loading, .error-msg {
+    .loading,
+    .error-msg {
       padding: 60px;
       text-align: center;
       color: #666;
     }
-    .error-msg { color: #dc2626; }
 
-    .slug-copy { color: #1a56db; cursor: pointer; }
-    .slug-copy:hover { text-decoration: underline; }
+    .error-msg {
+      color: #dc2626;
+    }
+
+    .slug-copy {
+      color: #1a56db;
+      cursor: pointer;
+    }
+
+    .slug-copy:hover {
+      text-decoration: underline;
+    }
+
+    .cell-ellipsis {
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block;
+    }
+
     .copy-toast {
       position: fixed;
       top: 16px;
@@ -228,518 +377,548 @@
     }
   </style>
 </head>
+
 <body>
-<div id="app">
-  <header>
-    <h1>OpenRouter 模型列表</h1>
-    <span class="meta" v-if="!loading && !error">
-      共 {{ models.length }} 个模型，已筛选 {{ filteredModels.length }} 个
-    </span>
-  </header>
+  <div id="app">
+    <header>
+      <h1>OpenRouter 模型列表</h1>
+      <span class="meta" v-if="!loading && !error">
+        共 {{ models.length }} 个模型，已筛选 {{ filteredModels.length }} 个
+      </span>
+      <nav class="header-links">
+        <a href="https://openrouter.ai/models" target="_blank" rel="noopener">Models</a>
+        <a href="https://openrouter.ai/docs/quickstart" target="_blank" rel="noopener">Docs</a>
+        <a href="https://openrouter.ai/rankings" target="_blank" rel="noopener">Rankings</a>
+        <a href="https://openrouter.ai/activity" target="_blank" rel="noopener">Activity</a>
+        <a href="https://openrouter.ai/settings/credits" target="_blank" rel="noopener">Credits</a>
+      </nav>
+    </header>
 
-  <div class="filters" v-if="!loading && !error">
-    <div class="filter-group">
-      <label>名称/标识</label>
-      <input type="text" v-model="filterSearch" placeholder="搜索..." style="width:160px">
-    </div>
-    <div class="filter-group">
-      <label>上下文</label>
-      <select v-model="filterCtxMin">
-        <option value="">不限</option>
-        <option value="8000">≥8K</option>
-        <option value="32000">≥32K</option>
-        <option value="64000">≥64K</option>
-        <option value="128000">≥128K</option>
-        <option value="200000">≥200K</option>
-        <option value="1000000">≥1M</option>
-      </select>
-      <span style="color:#999">~</span>
-      <select v-model="filterCtxMax">
-        <option value="">不限</option>
-        <option value="8000">≤8K</option>
-        <option value="32000">≤32K</option>
-        <option value="64000">≤64K</option>
-        <option value="128000">≤128K</option>
-        <option value="200000">≤200K</option>
-        <option value="1000000">≤1M</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label>输入模态</label>
-      <select class="mod-select" v-model="filterInputMod">
-        <option value="">全部</option>
-        <option v-for="m in inputModalities" :key="m" :value="m">{{ m }}</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label>输出模态</label>
-      <select class="mod-select" v-model="filterOutputMod">
-        <option value="">全部</option>
-        <option v-for="m in outputModalities" :key="m" :value="m">{{ m }}</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label>推理</label>
-      <select v-model="filterReasoning">
-        <option value="">全部</option>
-        <option value="yes">是</option>
-        <option value="no">否</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label>免费</label>
-      <select v-model="filterFree">
-        <option value="">全部</option>
-        <option value="yes">是</option>
-        <option value="no">否</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label>工具调用</label>
-      <select v-model="filterToolChoice">
-        <option value="">全部</option>
-        <option value="yes">是</option>
-        <option value="no">否</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label>可用</label>
-      <select v-model="filterAvailable">
-        <option value="">全部</option>
-        <option value="yes">是</option>
-        <option value="no">否</option>
-      </select>
-    </div>
-    <div class="filter-group">
-      <label>周用量≥</label>
-      <input type="text" class="token-input" v-model="filterWeeklyRaw" placeholder="如 1B">
-    </div>
-    <div class="preset-btns">
-      <button class="preset-btn" :class="{ active: filterWeeklyRaw === '1' }" @click="setWeekly('1')">&gt;0</button>
-      <button class="preset-btn" :class="{ active: filterWeeklyRaw === '100M' }" @click="setWeekly('100M')">≥100M</button>
-      <button class="preset-btn" :class="{ active: filterWeeklyRaw === '1B' }" @click="setWeekly('1B')">≥1B</button>
-    </div>
-    <button class="btn-reset" @click="resetFilters">重置</button>
-  </div>
-
-  <div class="loading" v-if="loading">加载中...</div>
-  <div class="error-msg" v-else-if="error">{{ error }}</div>
-
-  <div class="table-wrap" v-else>
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>模型名称</th>
-          <th class="sortable" @click="toggleSort('slug')">
-            模型标识<span class="arrow">{{ sortIcon('slug') }}</span>
-          </th>
-          <th class="sortable num" @click="toggleSort('pricing.prompt')">
-            输入价格<span class="arrow">{{ sortIcon('pricing.prompt') }}</span>
-          </th>
-          <th class="sortable num" @click="toggleSort('pricing.completion')">
-            输出价格<span class="arrow">{{ sortIcon('pricing.completion') }}</span>
-          </th>
-          <th class="sortable num" @click="toggleSort('weekly_tokens')">
-            周用量<span class="arrow">{{ sortIcon('weekly_tokens') }}</span>
-          </th>
-          <th class="sortable num" @click="toggleSort('context_length')">
-            上下文长度<span class="arrow">{{ sortIcon('context_length') }}</span>
-          </th>
-          <th>输入模态</th>
-          <th>输出模态</th>
-          <th>推理</th>
-          <th>免费</th>
-          <th>工具调用</th>
-          <th class="sortable" @click="toggleSort('created_at')">
-            创建时间<span class="arrow">{{ sortIcon('created_at') }}</span>
-          </th>
-          <th class="sortable" @click="toggleSort('updated_at')">
-            更新时间<span class="arrow">{{ sortIcon('updated_at') }}</span>
-          </th>
-          <th>详情</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(m, i) in filteredModels" :key="m.permaslug + ':' + (m.endpoint?.id || i)">
-          <td class="num">{{ i + 1 }}</td>
-          <td>{{ m.name }}</td>
-          <td>
-            <span class="slug-copy" @click="copySlug(m._displaySlug)" :title="'点击复制 ' + m._displaySlug">{{ m._displaySlug }}</span>
-          </td>
-          <td class="num">{{ formatPrice(m._promptPrice) }}</td>
-          <td class="num">{{ formatPrice(m._completionPrice) }}</td>
-          <td class="num">{{ formatTokens(m._weeklyTokens) }}</td>
-          <td class="num">{{ formatCtx(m.context_length) }}</td>
-          <td><span v-for="mod in m.input_modalities" :key="mod" :class="'tag tag-' + (tagClass[mod] || 'default')">{{ mod }}</span></td>
-          <td><span v-for="mod in m.output_modalities" :key="mod" :class="'tag tag-' + (tagClass[mod] || 'default')">{{ mod }}</span></td>
-          <td class="center"><span :class="m.supports_reasoning ? 'bool-y' : 'bool-n'">{{ m.supports_reasoning ? '✓' : '-' }}</span></td>
-          <td class="center"><span :class="m._isFree ? 'bool-y' : 'bool-n'">{{ m._isFree ? '✓' : '-' }}</span></td>
-          <td class="center"><span :class="m._supportsToolChoice ? 'bool-y' : 'bool-n'">{{ m._supportsToolChoice ? '✓' : '-' }}</span></td>
-          <td>{{ formatDate(m.created_at) }}</td>
-          <td>{{ formatDate(m.updated_at) }}</td>
-          <td><button class="btn-detail" @click="showDetail(m)">JSON</button></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="copy-toast" v-if="copyMsg">{{ copyMsg }}</div>
-
-  <div class="modal-overlay" v-if="detailModel" @click.self="closeDetail">
-    <div class="modal">
-      <div class="modal-header">
-        <span>{{ detailModel.name }}</span>
-        <button class="modal-close" @click="closeDetail">&times;</button>
+    <div class="filters" v-if="!loading && !error">
+      <div class="filter-group">
+        <label>名称/标识</label>
+        <input type="text" v-model="filterSearch" placeholder="搜索..." style="width:160px">
       </div>
-      <div class="modal-body">
-        <pre>{{ translatedJson }}</pre>
+      <div class="filter-group">
+        <label>上下文</label>
+        <select v-model="filterCtxMin">
+          <option value="">不限</option>
+          <option value="8000">≥8K</option>
+          <option value="32000">≥32K</option>
+          <option value="64000">≥64K</option>
+          <option value="128000">≥128K</option>
+          <option value="200000">≥200K</option>
+          <option value="1000000">≥1M</option>
+        </select>
+        <span style="color:#999">~</span>
+        <select v-model="filterCtxMax">
+          <option value="">不限</option>
+          <option value="8000">≤8K</option>
+          <option value="32000">≤32K</option>
+          <option value="64000">≤64K</option>
+          <option value="128000">≤128K</option>
+          <option value="200000">≤200K</option>
+          <option value="1000000">≤1M</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>输入模态</label>
+        <select class="mod-select" v-model="filterInputMod">
+          <option value="">全部</option>
+          <option v-for="m in inputModalities" :key="m" :value="m">{{ m }}</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>输出模态</label>
+        <select class="mod-select" v-model="filterOutputMod">
+          <option value="">全部</option>
+          <option v-for="m in outputModalities" :key="m" :value="m">{{ m }}</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>推理</label>
+        <select v-model="filterReasoning">
+          <option value="">全部</option>
+          <option value="yes">是</option>
+          <option value="no">否</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>免费</label>
+        <select v-model="filterFree">
+          <option value="">全部</option>
+          <option value="yes">是</option>
+          <option value="no">否</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>工具调用</label>
+        <select v-model="filterToolChoice">
+          <option value="">全部</option>
+          <option value="yes">是</option>
+          <option value="no">否</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>可用</label>
+        <select v-model="filterAvailable">
+          <option value="">全部</option>
+          <option value="yes">是</option>
+          <option value="no">否</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>周用量≥</label>
+        <input type="text" class="token-input" v-model="filterWeeklyRaw" placeholder="如 1B">
+      </div>
+      <div class="preset-btns">
+        <button class="preset-btn" :class="{ active: filterWeeklyRaw === '1' }" @click="setWeekly('1')">&gt;0</button>
+        <button class="preset-btn" :class="{ active: filterWeeklyRaw === '100M' }"
+          @click="setWeekly('100M')">≥100M</button>
+        <button class="preset-btn" :class="{ active: filterWeeklyRaw === '1B' }" @click="setWeekly('1B')">≥1B</button>
+      </div>
+      <button class="btn-reset" @click="resetFilters">重置</button>
+    </div>
+
+    <div class="loading" v-if="loading">加载中...</div>
+    <div class="error-msg" v-else-if="error">{{ error }}</div>
+
+    <div class="table-wrap" v-else>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>模型名称</th>
+            <th class="sortable" @click="toggleSort('slug')">
+              模型标识<span class="arrow">{{ sortIcon('slug') }}</span>
+            </th>
+            <th class="sortable num" @click="toggleSort('pricing.prompt')">
+              输入价格<span class="arrow">{{ sortIcon('pricing.prompt') }}</span>
+            </th>
+            <th class="sortable num" @click="toggleSort('pricing.completion')">
+              输出价格<span class="arrow">{{ sortIcon('pricing.completion') }}</span>
+            </th>
+            <th class="sortable num" @click="toggleSort('weekly_tokens')">
+              周用量<span class="arrow">{{ sortIcon('weekly_tokens') }}</span>
+            </th>
+            <th class="sortable num" @click="toggleSort('context_length')">
+              上下文长度<span class="arrow">{{ sortIcon('context_length') }}</span>
+            </th>
+            <th>输入模态</th>
+            <th>输出模态</th>
+            <th>推理</th>
+            <th>免费</th>
+            <th class="sortable" @click="toggleSort('created_at')">
+              创建时间<span class="arrow">{{ sortIcon('created_at') }}</span>
+            </th>
+            <th class="sortable" @click="toggleSort('updated_at')">
+              更新时间<span class="arrow">{{ sortIcon('updated_at') }}</span>
+            </th>
+            <th>详情</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(m, i) in filteredModels" :key="m.permaslug + ':' + (m.endpoint?.id || i)">
+            <td class="num">{{ i + 1 }}</td>
+            <td><span class="cell-ellipsis" :title="m.name">{{ m.name }}</span></td>
+            <td><span class="cell-ellipsis slug-copy" @click="copySlug(m._displaySlug)"
+                :title="m._displaySlug + '（点击复制）'">{{ m._displaySlug }}</span></td>
+            <td class="num">{{ formatPrice(m._promptPrice) }}</td>
+            <td class="num">{{ formatPrice(m._completionPrice) }}</td>
+            <td class="num">{{ formatTokens(m._weeklyTokens) }}</td>
+            <td class="num">{{ formatCtx(m.context_length) }}</td>
+            <td>
+              <span v-for="mod in m._inputModDisplay" :key="mod" :class="'tag tag-' + (tagClass[mod] || 'default')">{{
+                mod }}</span>
+              <span v-if="m._inputModOther" class="tag tag-default" :title="m._inputModOther">other</span>
+            </td>
+            <td>
+              <span v-for="mod in (m.output_modalities || [])" :key="mod"
+                :class="'tag tag-' + (tagClass[mod] || 'default')">{{ mod }}</span>
+            </td>
+            <td class="center"><span :class="m.supports_reasoning ? 'bool-y' : 'bool-n'">{{ m.supports_reasoning ? '✓' :
+                '-' }}</span></td>
+            <td class="center"><span :class="m._isFree ? 'bool-y' : 'bool-n'">{{ m._isFree ? '✓' : '-' }}</span></td>
+            <td>{{ formatDate(m.created_at) }}</td>
+            <td>{{ formatDate(m.updated_at) }}</td>
+            <td><button class="btn-detail" @click="showDetail(m)">JSON</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="copy-toast" v-if="copyMsg">{{ copyMsg }}</div>
+
+    <div class="modal-overlay" v-if="detailModel" @click.self="closeDetail">
+      <div class="modal">
+        <div class="modal-header">
+          <span>{{ detailModel.name }}</span>
+          <button class="modal-close" @click="closeDetail">&times;</button>
+        </div>
+        <div class="modal-body">
+          <pre>{{ translatedJson }}</pre>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-<script>
-const { createApp, ref, computed, onMounted, watch } = Vue;
+  <script>
+    const { createApp, ref, computed, onMounted, watch } = Vue;
 
-const KEY_MAP = {
-  slug: '模型标识', hf_slug: 'HuggingFace标识', updated_at: '更新时间',
-  created_at: '创建时间', hf_updated_at: 'HF更新时间', name: '模型名称',
-  short_name: '简称', author: '作者', description: '描述',
-  model_version_group_id: '版本组ID', context_length: '上下文长度',
-  input_modalities: '输入模态', output_modalities: '输出模态',
-  has_text_output: '支持文本输出', group: '分组', instruct_type: '指令类型',
-  default_system: '默认系统提示词', default_stops: '默认停止标记',
-  hidden: '是否隐藏', router: '路由', warning_message: '警告信息',
-  promotion_message: '推广信息', routing_error_message: '路由错误信息',
-  permaslug: '永久标识', supports_reasoning: '支持推理',
-  reasoning_config: '推理配置', start_token: '起始标记',
-  end_token: '结束标记', default_reasoning_enabled: '默认启用推理',
-  reasoning_return_mechanism: '推理返回机制', features: '功能特性',
-  chat_template_config: '对话模板配置', default_parameters: '默认参数',
-  temperature: '温度', top_p: 'Top-P', frequency_penalty: '频率惩罚',
-  default_order: '默认排序', quick_start_example_type: '快速开始示例类型',
-  is_trainable_text: '可训练文本', is_trainable_image: '可训练图像',
-  endpoint: '端点', id: 'ID', model: '模型',
-  model_variant_slug: '模型变体标识', model_variant_permaslug: '模型变体永久标识',
-  adapter_name: '适配器名称', provider_name: '供应商名称',
-  provider_info: '供应商信息', displayName: '显示名称', baseUrl: '基础URL',
-  dataPolicy: '数据政策', training: '用于训练',
-  trainingOpenRouter: 'OpenRouter训练', retainsPrompts: '保留提示词',
-  canPublish: '可发布', datacenters: '数据中心', regionOverrides: '区域覆盖',
-  hasChatCompletions: '支持对话补全', hasCompletions: '支持补全',
-  isAbortable: '可中断', moderationRequired: '需要审核', editors: '编辑者',
-  owners: '所有者', adapterName: '适配器名称', statusPageUrl: '状态页URL',
-  byokEnabled: '支持自带密钥', icon: '图标', url: '链接',
-  ignoredProviderModels: '忽略的供应商模型', sendClientIp: '发送客户端IP',
-  pricingStrategy: '定价策略', provider_display_name: '供应商显示名',
-  provider_slug: '供应商标识', provider_model_id: '供应商模型ID',
-  quantization: '量化', variant: '变体', is_free: '免费',
-  can_abort: '可中断', max_prompt_tokens: '最大输入Token数',
-  max_completion_tokens: '最大输出Token数', max_tokens_per_image: '每图最大Token数',
-  supported_parameters: '支持的参数', is_byok: '自带密钥',
-  moderation_required: '需要审核', data_policy: '数据政策',
-  pricing: '定价', prompt: '输入价格', completion: '输出价格',
-  discount: '折扣', line_items: '明细项', variable_pricings: '可变定价',
-  pricing_json: '定价JSON', 'openai:prompt_tokens': 'OpenAI输入Token价格',
-  'openai:completion_tokens': 'OpenAI输出Token价格',
-  pricing_version_id: '定价版本ID', is_hidden: '是否隐藏',
-  is_deranked: '是否降权', is_disabled: '是否禁用',
-  supports_tool_parameters: '支持工具参数', supports_multipart: '支持多部分',
-  limit_rpm: 'RPM限制', limit_rpd: 'RPD限制', limit_rpm_cf: 'CF RPM限制',
-  has_completions: '支持补全', has_chat_completions: '支持对话补全',
-  supports_tool_choice: '支持工具调用', literal_none: '支持none',
-  literal_auto: '支持auto', literal_required: '支持required',
-  type_function: '支持function类型', provider_region: '供应商区域',
-  deprecation_date: '弃用日期',
-};
-
-function translateObj(obj) {
-  if (Array.isArray(obj)) return obj.map(translateObj);
-  if (obj && typeof obj === 'object') {
-    const r = {};
-    for (const [k, v] of Object.entries(obj)) {
-      if (k.startsWith('_')) continue;
-      r[KEY_MAP[k] || k] = translateObj(v);
-    }
-    return r;
-  }
-  return obj;
-}
-
-function parseTokenValue(raw) {
-  if (!raw) return null;
-  const s = String(raw).trim().toUpperCase();
-  if (!s) return null;
-  const m = s.match(/^(\d+(?:\.\d+)?)\s*([KMBT]?)$/);
-  if (!m) { const n = parseFloat(s); return isNaN(n) ? null : n; }
-  const num = parseFloat(m[1]);
-  switch (m[2]) {
-    case 'K': return num * 1e3;
-    case 'M': return num * 1e6;
-    case 'B': return num * 1e9;
-    case 'T': return num * 1e12;
-    default: return num;
-  }
-}
-
-createApp({
-  setup() {
-    const models = ref([]);
-    const analytics = ref({});
-    const loading = ref(true);
-    const error = ref(null);
-
-    const STORAGE_KEY = 'or-filters';
-    const SORT_STORAGE_KEY = 'or-sort';
-
-    const defaults = {
-      filterSearch: '', filterInputMod: '', filterOutputMod: '',
-      filterReasoning: '', filterFree: '', filterToolChoice: '',
-      filterAvailable: 'yes', filterCtxMin: '', filterCtxMax: '', filterWeeklyRaw: '',
+    const KEY_MAP = {
+      slug: '模型标识', hf_slug: 'HuggingFace标识', updated_at: '更新时间',
+      created_at: '创建时间', hf_updated_at: 'HF更新时间', name: '模型名称',
+      short_name: '简称', author: '作者', description: '描述',
+      model_version_group_id: '版本组ID', context_length: '上下文长度',
+      input_modalities: '输入模态', output_modalities: '输出模态',
+      has_text_output: '支持文本输出', group: '分组', instruct_type: '指令类型',
+      default_system: '默认系统提示词', default_stops: '默认停止标记',
+      hidden: '是否隐藏', router: '路由', warning_message: '警告信息',
+      promotion_message: '推广信息', routing_error_message: '路由错误信息',
+      permaslug: '永久标识', supports_reasoning: '支持推理',
+      reasoning_config: '推理配置', start_token: '起始标记',
+      end_token: '结束标记', default_reasoning_enabled: '默认启用推理',
+      reasoning_return_mechanism: '推理返回机制', features: '功能特性',
+      chat_template_config: '对话模板配置', default_parameters: '默认参数',
+      temperature: '温度', top_p: 'Top-P', frequency_penalty: '频率惩罚',
+      default_order: '默认排序', quick_start_example_type: '快速开始示例类型',
+      is_trainable_text: '可训练文本', is_trainable_image: '可训练图像',
+      endpoint: '端点', id: 'ID', model: '模型',
+      model_variant_slug: '模型变体标识', model_variant_permaslug: '模型变体永久标识',
+      adapter_name: '适配器名称', provider_name: '供应商名称',
+      provider_info: '供应商信息', displayName: '显示名称', baseUrl: '基础URL',
+      dataPolicy: '数据政策', training: '用于训练',
+      trainingOpenRouter: 'OpenRouter训练', retainsPrompts: '保留提示词',
+      canPublish: '可发布', datacenters: '数据中心', regionOverrides: '区域覆盖',
+      hasChatCompletions: '支持对话补全', hasCompletions: '支持补全',
+      isAbortable: '可中断', moderationRequired: '需要审核', editors: '编辑者',
+      owners: '所有者', adapterName: '适配器名称', statusPageUrl: '状态页URL',
+      byokEnabled: '支持自带密钥', icon: '图标', url: '链接',
+      ignoredProviderModels: '忽略的供应商模型', sendClientIp: '发送客户端IP',
+      pricingStrategy: '定价策略', provider_display_name: '供应商显示名',
+      provider_slug: '供应商标识', provider_model_id: '供应商模型ID',
+      quantization: '量化', variant: '变体', is_free: '免费',
+      can_abort: '可中断', max_prompt_tokens: '最大输入Token数',
+      max_completion_tokens: '最大输出Token数', max_tokens_per_image: '每图最大Token数',
+      supported_parameters: '支持的参数', is_byok: '自带密钥',
+      moderation_required: '需要审核', data_policy: '数据政策',
+      pricing: '定价', prompt: '输入价格', completion: '输出价格',
+      discount: '折扣', line_items: '明细项', variable_pricings: '可变定价',
+      pricing_json: '定价JSON', 'openai:prompt_tokens': 'OpenAI输入Token价格',
+      'openai:completion_tokens': 'OpenAI输出Token价格',
+      pricing_version_id: '定价版本ID', is_hidden: '是否隐藏',
+      is_deranked: '是否降权', is_disabled: '是否禁用',
+      supports_tool_parameters: '支持工具参数', supports_multipart: '支持多部分',
+      limit_rpm: 'RPM限制', limit_rpd: 'RPD限制', limit_rpm_cf: 'CF RPM限制',
+      has_completions: '支持补全', has_chat_completions: '支持对话补全',
+      supports_tool_choice: '支持工具调用', literal_none: '支持none',
+      literal_auto: '支持auto', literal_required: '支持required',
+      type_function: '支持function类型', provider_region: '供应商区域',
+      deprecation_date: '弃用日期',
     };
-    const savedSort = (() => { try { return JSON.parse(localStorage.getItem(SORT_STORAGE_KEY)) || {}; } catch { return {}; } })();
-    const saved = (() => { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; } })();
-    const init = (k) => saved[k] !== undefined ? saved[k] : defaults[k];
 
-    const sortKey = ref(savedSort.sortKey || 'created_at');
-    const sortDir = ref(savedSort.sortDir || 'desc');
-
-    const filterSearch = ref(init('filterSearch'));
-    const filterInputMod = ref(init('filterInputMod'));
-    const filterOutputMod = ref(init('filterOutputMod'));
-    const filterReasoning = ref(init('filterReasoning'));
-    const filterFree = ref(init('filterFree'));
-    const filterToolChoice = ref(init('filterToolChoice'));
-    const filterAvailable = ref(init('filterAvailable'));
-    const filterCtxMin = ref(init('filterCtxMin'));
-    const filterCtxMax = ref(init('filterCtxMax'));
-    const filterWeeklyRaw = ref(init('filterWeeklyRaw'));
-
-    const copyMsg = ref('');
-    let copyTimer = null;
-
-    const detailModel = ref(null);
-
-    const tagClass = { text: 'text', image: 'image', audio: 'audio', file: 'file' };
-
-    function getWeekly(m) {
-      const a = analytics.value[m.permaslug];
-      if (!a) return 0;
-      return (a.total_completion_tokens || 0) + (a.total_prompt_tokens || 0);
-    }
-
-    const inputModalities = computed(() => {
-      const s = new Set();
-      models.value.forEach(m => m.input_modalities?.forEach(v => s.add(v)));
-      return [...s].sort();
-    });
-    const outputModalities = computed(() => {
-      const s = new Set();
-      models.value.forEach(m => m.output_modalities?.forEach(v => s.add(v)));
-      return [...s].sort();
-    });
-
-    const filteredModels = computed(() => {
-      let list = models.value.map(m => ({
-        ...m,
-        _displaySlug: m.endpoint?.model_variant_slug || m.slug,
-        _weeklyTokens: getWeekly(m),
-        _promptPrice: m.endpoint?.pricing?.prompt,
-        _completionPrice: m.endpoint?.pricing?.completion,
-        _isFree: m.endpoint?.is_free || false,
-        _available: !!m.endpoint,
-        _supportsToolChoice: (() => {
-          const stc = m.endpoint?.features?.supports_tool_choice;
-          return !!(stc && Object.values(stc).some(v => v === true));
-        })(),
-      }));
-
-      if (filterSearch.value) {
-        const q = filterSearch.value.toLowerCase();
-        list = list.filter(m => m.name.toLowerCase().includes(q) || m.slug.toLowerCase().includes(q) || m._displaySlug.toLowerCase().includes(q));
-      }
-      if (filterInputMod.value) {
-        list = list.filter(m => m.input_modalities?.includes(filterInputMod.value));
-      }
-      if (filterOutputMod.value) {
-        list = list.filter(m => m.output_modalities?.includes(filterOutputMod.value));
-      }
-      if (filterReasoning.value === 'yes') list = list.filter(m => m.supports_reasoning);
-      else if (filterReasoning.value === 'no') list = list.filter(m => !m.supports_reasoning);
-      if (filterFree.value === 'yes') list = list.filter(m => m._isFree);
-      else if (filterFree.value === 'no') list = list.filter(m => !m._isFree);
-      if (filterToolChoice.value === 'yes') list = list.filter(m => m._supportsToolChoice);
-      else if (filterToolChoice.value === 'no') list = list.filter(m => !m._supportsToolChoice);
-      if (filterAvailable.value === 'yes') list = list.filter(m => m._available);
-      else if (filterAvailable.value === 'no') list = list.filter(m => !m._available);
-      if (filterCtxMin.value) {
-        const min = parseInt(filterCtxMin.value);
-        list = list.filter(m => (m.context_length || 0) >= min);
-      }
-      if (filterCtxMax.value) {
-        const max = parseInt(filterCtxMax.value);
-        list = list.filter(m => (m.context_length || 0) <= max);
-      }
-
-      const weeklyMin = parseTokenValue(filterWeeklyRaw.value);
-      if (weeklyMin !== null) {
-        list = list.filter(m => m._weeklyTokens >= weeklyMin);
-      }
-
-      const sk = sortKey.value;
-      const sd = sortDir.value;
-      return [...list].sort((a, b) => {
-        let va, vb;
-        switch (sk) {
-          case 'slug': va = a.slug; vb = b.slug; break;
-          case 'context_length': va = a.context_length || 0; vb = b.context_length || 0; break;
-          case 'pricing.prompt': va = parseFloat(a._promptPrice || '0'); vb = parseFloat(b._promptPrice || '0'); break;
-          case 'pricing.completion': va = parseFloat(a._completionPrice || '0'); vb = parseFloat(b._completionPrice || '0'); break;
-          case 'created_at': va = a.created_at || ''; vb = b.created_at || ''; break;
-          case 'updated_at': va = a.updated_at || ''; vb = b.updated_at || ''; break;
-          case 'weekly_tokens': va = a._weeklyTokens; vb = b._weeklyTokens; break;
-          default: va = a.created_at || ''; vb = b.created_at || '';
+    function translateObj(obj) {
+      if (Array.isArray(obj)) return obj.map(translateObj);
+      if (obj && typeof obj === 'object') {
+        const r = {};
+        for (const [k, v] of Object.entries(obj)) {
+          if (k.startsWith('_')) continue;
+          r[KEY_MAP[k] || k] = translateObj(v);
         }
-        if (va < vb) return sd === 'asc' ? -1 : 1;
-        if (va > vb) return sd === 'asc' ? 1 : -1;
-        return 0;
-      });
-    });
+        return r;
+      }
+      return obj;
+    }
 
-    function toggleSort(key) {
-      if (sortKey.value === key) {
-        sortDir.value = sortDir.value === 'asc' ? 'desc' : 'asc';
-      } else {
-        sortKey.value = key;
-        sortDir.value = key === 'slug' ? 'asc' : 'desc';
+    function parseTokenValue(raw) {
+      if (!raw) return null;
+      const s = String(raw).trim().toUpperCase();
+      if (!s) return null;
+      const m = s.match(/^(\d+(?:\.\d+)?)\s*([KMBT]?)$/);
+      if (!m) { const n = parseFloat(s); return isNaN(n) ? null : n; }
+      const num = parseFloat(m[1]);
+      switch (m[2]) {
+        case 'K': return num * 1e3;
+        case 'M': return num * 1e6;
+        case 'B': return num * 1e9;
+        case 'T': return num * 1e12;
+        default: return num;
       }
     }
 
-    function sortIcon(key) {
-      if (sortKey.value !== key) return '';
-      return sortDir.value === 'asc' ? ' ↑' : ' ↓';
-    }
+    createApp({
+      setup() {
+        const models = ref([]);
+        const analytics = ref({});
+        const loading = ref(true);
+        const error = ref(null);
 
-    function formatTokens(n) {
-      if (n == null || n === 0) return '-';
-      if (n >= 1e12) return (n / 1e12).toFixed(1) + 'T';
-      if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
-      if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
-      if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
-      return String(n);
-    }
+        const STORAGE_KEY = 'or-filters';
+        const SORT_STORAGE_KEY = 'or-sort';
 
-    function formatPrice(p) {
-      if (!p) return '-';
-      const v = parseFloat(p);
-      if (v === 0) return '$0/M';
-      const pm = v * 1e6;
-      if (pm < 0.01) return '<$0.01/M';
-      return '$' + pm.toFixed(2) + '/M';
-    }
+        const defaults = {
+          filterSearch: '', filterInputMod: '', filterOutputMod: '',
+          filterReasoning: '', filterFree: '', filterToolChoice: '',
+          filterAvailable: 'yes', filterCtxMin: '', filterCtxMax: '', filterWeeklyRaw: '',
+        };
+        const savedSort = (() => { try { return JSON.parse(localStorage.getItem(SORT_STORAGE_KEY)) || {}; } catch { return {}; } })();
+        const saved = (() => { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; } })();
+        const init = (k) => saved[k] !== undefined ? saved[k] : defaults[k];
 
-    function formatCtx(n) {
-      if (!n) return '-';
-      if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
-      return Math.round(n / 1e3) + 'K';
-    }
+        const sortKey = ref(savedSort.sortKey || 'created_at');
+        const sortDir = ref(savedSort.sortDir || 'desc');
 
-    function formatDate(d) {
-      if (!d) return '-';
-      return d.slice(0, 10);
-    }
+        const filterSearch = ref(init('filterSearch'));
+        const filterInputMod = ref(init('filterInputMod'));
+        const filterOutputMod = ref(init('filterOutputMod'));
+        const filterReasoning = ref(init('filterReasoning'));
+        const filterFree = ref(init('filterFree'));
+        const filterToolChoice = ref(init('filterToolChoice'));
+        const filterAvailable = ref(init('filterAvailable'));
+        const filterCtxMin = ref(init('filterCtxMin'));
+        const filterCtxMax = ref(init('filterCtxMax'));
+        const filterWeeklyRaw = ref(init('filterWeeklyRaw'));
 
-    function showDetail(m) {
-      // Clone without computed _ fields
-      const clean = {};
-      for (const [k, v] of Object.entries(m)) {
-        if (!k.startsWith('_')) clean[k] = v;
+        const copyMsg = ref('');
+        let copyTimer = null;
+
+        const detailModel = ref(null);
+
+        const tagClass = { text: 'text', image: 'image', audio: 'audio', file: 'file' };
+
+        function getWeekly(m) {
+          const a = analytics.value[m.permaslug];
+          if (!a) return 0;
+          return (a.total_completion_tokens || 0) + (a.total_prompt_tokens || 0);
+        }
+
+        const inputModalities = computed(() => {
+          const s = new Set();
+          models.value.forEach(m => m.input_modalities?.forEach(v => s.add(v)));
+          return [...s].sort();
+        });
+        const outputModalities = computed(() => {
+          const s = new Set();
+          models.value.forEach(m => m.output_modalities?.forEach(v => s.add(v)));
+          return [...s].sort();
+        });
+
+        const MOD_ORDER = ['text', 'image', 'file', 'audio', 'video'];
+        const SHOW_MODS = new Set(['text', 'image']);
+
+        function modDisplay(mods) {
+          const sorted = [...(mods || [])].sort((a, b) => {
+            const ai = MOD_ORDER.indexOf(a), bi = MOD_ORDER.indexOf(b);
+            return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+          });
+          const display = sorted.filter(m => SHOW_MODS.has(m));
+          const other = sorted.filter(m => !SHOW_MODS.has(m));
+          return { display, other: other.length ? other.join(', ') : '' };
+        }
+
+        const filteredModels = computed(() => {
+          let list = models.value.map(m => ({
+            ...m,
+            _displaySlug: m.endpoint?.model_variant_slug || m.slug,
+            _weeklyTokens: getWeekly(m),
+            _promptPrice: m.endpoint?.pricing?.prompt,
+            _completionPrice: m.endpoint?.pricing?.completion,
+            _isFree: m.endpoint?.is_free || false,
+            _available: !!m.endpoint,
+            _supportsToolChoice: (() => {
+              const stc = m.endpoint?.features?.supports_tool_choice;
+              return !!(stc && Object.values(stc).some(v => v === true));
+            })(),
+            ...(({ display: _inputModDisplay, other: _inputModOther }) => ({ _inputModDisplay, _inputModOther }))(modDisplay(m.input_modalities)),
+            ...(({ display: _outputModDisplay, other: _outputModOther }) => ({ _outputModDisplay, _outputModOther }))(modDisplay(m.output_modalities)),
+          }));
+
+          if (filterSearch.value) {
+            const q = filterSearch.value.toLowerCase();
+            list = list.filter(m => m.name.toLowerCase().includes(q) || m.slug.toLowerCase().includes(q) || m._displaySlug.toLowerCase().includes(q));
+          }
+          if (filterInputMod.value) {
+            list = list.filter(m => m.input_modalities?.includes(filterInputMod.value));
+          }
+          if (filterOutputMod.value) {
+            list = list.filter(m => m.output_modalities?.includes(filterOutputMod.value));
+          }
+          if (filterReasoning.value === 'yes') list = list.filter(m => m.supports_reasoning);
+          else if (filterReasoning.value === 'no') list = list.filter(m => !m.supports_reasoning);
+          if (filterFree.value === 'yes') list = list.filter(m => m._isFree);
+          else if (filterFree.value === 'no') list = list.filter(m => !m._isFree);
+          if (filterToolChoice.value === 'yes') list = list.filter(m => m._supportsToolChoice);
+          else if (filterToolChoice.value === 'no') list = list.filter(m => !m._supportsToolChoice);
+          if (filterAvailable.value === 'yes') list = list.filter(m => m._available);
+          else if (filterAvailable.value === 'no') list = list.filter(m => !m._available);
+          if (filterCtxMin.value) {
+            const min = parseInt(filterCtxMin.value);
+            list = list.filter(m => (m.context_length || 0) >= min);
+          }
+          if (filterCtxMax.value) {
+            const max = parseInt(filterCtxMax.value);
+            list = list.filter(m => (m.context_length || 0) <= max);
+          }
+
+          const weeklyMin = parseTokenValue(filterWeeklyRaw.value);
+          if (weeklyMin !== null) {
+            list = list.filter(m => m._weeklyTokens >= weeklyMin);
+          }
+
+          const sk = sortKey.value;
+          const sd = sortDir.value;
+          return [...list].sort((a, b) => {
+            let va, vb;
+            switch (sk) {
+              case 'slug': va = a.slug; vb = b.slug; break;
+              case 'context_length': va = a.context_length || 0; vb = b.context_length || 0; break;
+              case 'pricing.prompt': va = parseFloat(a._promptPrice || '0'); vb = parseFloat(b._promptPrice || '0'); break;
+              case 'pricing.completion': va = parseFloat(a._completionPrice || '0'); vb = parseFloat(b._completionPrice || '0'); break;
+              case 'created_at': va = a.created_at || ''; vb = b.created_at || ''; break;
+              case 'updated_at': va = a.updated_at || ''; vb = b.updated_at || ''; break;
+              case 'weekly_tokens': va = a._weeklyTokens; vb = b._weeklyTokens; break;
+              default: va = a.created_at || ''; vb = b.created_at || '';
+            }
+            if (va < vb) return sd === 'asc' ? -1 : 1;
+            if (va > vb) return sd === 'asc' ? 1 : -1;
+            return 0;
+          });
+        });
+
+        function toggleSort(key) {
+          if (sortKey.value === key) {
+            sortDir.value = sortDir.value === 'asc' ? 'desc' : 'asc';
+          } else {
+            sortKey.value = key;
+            sortDir.value = key === 'slug' ? 'asc' : 'desc';
+          }
+        }
+
+        function sortIcon(key) {
+          if (sortKey.value !== key) return '';
+          return sortDir.value === 'asc' ? ' ↑' : ' ↓';
+        }
+
+        function formatTokens(n) {
+          if (n == null || n === 0) return '-';
+          if (n >= 1e12) return (n / 1e12).toFixed(1) + 'T';
+          if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
+          if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+          if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+          return String(n);
+        }
+
+        function formatPrice(p) {
+          if (!p) return '-';
+          const v = parseFloat(p);
+          if (v === 0) return '$0/M';
+          const pm = v * 1e6;
+          if (pm < 0.01) return '<$0.01/M';
+          return '$' + pm.toFixed(2) + '/M';
+        }
+
+        function formatCtx(n) {
+          if (!n) return '-';
+          if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+          return Math.round(n / 1e3) + 'K';
+        }
+
+        function formatDate(d) {
+          if (!d) return '-';
+          return d.slice(0, 10);
+        }
+
+        function showDetail(m) {
+          // Clone without computed _ fields
+          const clean = {};
+          for (const [k, v] of Object.entries(m)) {
+            if (!k.startsWith('_')) clean[k] = v;
+          }
+          detailModel.value = clean;
+        }
+
+        function closeDetail() { detailModel.value = null; }
+
+        const translatedJson = computed(() => {
+          if (!detailModel.value) return '';
+          return JSON.stringify(translateObj(detailModel.value), null, 2);
+        });
+
+        function copySlug(slug) {
+          navigator.clipboard.writeText(slug);
+          copyMsg.value = '已复制: ' + slug;
+          clearTimeout(copyTimer);
+          copyTimer = setTimeout(() => { copyMsg.value = ''; }, 1500);
+        }
+
+        function setWeekly(val) {
+          filterWeeklyRaw.value = filterWeeklyRaw.value === val ? '' : val;
+        }
+
+        function resetFilters() {
+          filterSearch.value = '';
+          filterInputMod.value = '';
+          filterOutputMod.value = '';
+          filterReasoning.value = '';
+          filterFree.value = '';
+          filterToolChoice.value = '';
+          filterAvailable.value = 'yes';
+          filterCtxMin.value = '';
+          filterCtxMax.value = '';
+          filterWeeklyRaw.value = '';
+          localStorage.removeItem(STORAGE_KEY);
+          localStorage.removeItem(SORT_STORAGE_KEY);
+          sortKey.value = 'created_at';
+          sortDir.value = 'desc';
+        }
+
+        onMounted(async () => {
+          watch([filterSearch, filterInputMod, filterOutputMod,
+            filterReasoning, filterFree, filterToolChoice, filterAvailable,
+            filterCtxMin, filterCtxMax, filterWeeklyRaw], () => {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                filterSearch: filterSearch.value,
+                filterInputMod: filterInputMod.value, filterOutputMod: filterOutputMod.value,
+                filterReasoning: filterReasoning.value, filterFree: filterFree.value,
+                filterToolChoice: filterToolChoice.value, filterAvailable: filterAvailable.value,
+                filterCtxMin: filterCtxMin.value, filterCtxMax: filterCtxMax.value,
+                filterWeeklyRaw: filterWeeklyRaw.value,
+              }));
+            });
+          watch([sortKey, sortDir], () => {
+            localStorage.setItem(SORT_STORAGE_KEY, JSON.stringify({
+              sortKey: sortKey.value, sortDir: sortDir.value,
+            }));
+          });
+
+          try {
+            const resp = await fetch('/api/models');
+            if (!resp.ok) throw new Error('请求失败: ' + resp.status);
+            const json = await resp.json();
+            if (json.error) throw new Error(json.error);
+            models.value = json.data?.models || [];
+            analytics.value = json.data?.analytics || {};
+          } catch (e) {
+            error.value = e.message;
+          } finally {
+            loading.value = false;
+          }
+        });
+
+        return {
+          models, loading, error, tagClass,
+          sortKey, sortDir, toggleSort, sortIcon,
+          filterSearch, filterInputMod, filterOutputMod,
+          filterReasoning, filterFree, filterToolChoice, filterAvailable,
+          filterCtxMin, filterCtxMax, filterWeeklyRaw,
+          filteredModels, inputModalities, outputModalities,
+          formatTokens, formatPrice, formatCtx, formatDate,
+          showDetail, closeDetail, detailModel, translatedJson,
+          copySlug, copyMsg, setWeekly, resetFilters,
+        };
       }
-      detailModel.value = clean;
-    }
-
-    function closeDetail() { detailModel.value = null; }
-
-    const translatedJson = computed(() => {
-      if (!detailModel.value) return '';
-      return JSON.stringify(translateObj(detailModel.value), null, 2);
-    });
-
-    function copySlug(slug) {
-      navigator.clipboard.writeText(slug);
-      copyMsg.value = '已复制: ' + slug;
-      clearTimeout(copyTimer);
-      copyTimer = setTimeout(() => { copyMsg.value = ''; }, 1500);
-    }
-
-    function setWeekly(val) {
-      filterWeeklyRaw.value = filterWeeklyRaw.value === val ? '' : val;
-    }
-
-    function resetFilters() {
-      filterSearch.value = '';
-      filterInputMod.value = '';
-      filterOutputMod.value = '';
-      filterReasoning.value = '';
-      filterFree.value = '';
-      filterToolChoice.value = '';
-      filterAvailable.value = 'yes';
-      filterCtxMin.value = '';
-      filterCtxMax.value = '';
-      filterWeeklyRaw.value = '';
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(SORT_STORAGE_KEY);
-      sortKey.value = 'created_at';
-      sortDir.value = 'desc';
-    }
-
-    onMounted(async () => {
-      watch([filterSearch, filterInputMod, filterOutputMod,
-        filterReasoning, filterFree, filterToolChoice, filterAvailable,
-        filterCtxMin, filterCtxMax, filterWeeklyRaw], () => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({
-          filterSearch: filterSearch.value,
-          filterInputMod: filterInputMod.value, filterOutputMod: filterOutputMod.value,
-          filterReasoning: filterReasoning.value, filterFree: filterFree.value,
-          filterToolChoice: filterToolChoice.value, filterAvailable: filterAvailable.value,
-          filterCtxMin: filterCtxMin.value, filterCtxMax: filterCtxMax.value,
-          filterWeeklyRaw: filterWeeklyRaw.value,
-        }));
-      });
-      watch([sortKey, sortDir], () => {
-        localStorage.setItem(SORT_STORAGE_KEY, JSON.stringify({
-          sortKey: sortKey.value, sortDir: sortDir.value,
-        }));
-      });
-
-      try {
-        const resp = await fetch('/api/models');
-        if (!resp.ok) throw new Error('请求失败: ' + resp.status);
-        const json = await resp.json();
-        if (json.error) throw new Error(json.error);
-        models.value = json.data?.models || [];
-        analytics.value = json.data?.analytics || {};
-      } catch (e) {
-        error.value = e.message;
-      } finally {
-        loading.value = false;
-      }
-    });
-
-    return {
-      models, loading, error, tagClass,
-      sortKey, sortDir, toggleSort, sortIcon,
-      filterSearch, filterInputMod, filterOutputMod,
-      filterReasoning, filterFree, filterToolChoice, filterAvailable,
-      filterCtxMin, filterCtxMax, filterWeeklyRaw,
-      filteredModels, inputModalities, outputModalities,
-      formatTokens, formatPrice, formatCtx, formatDate,
-      showDetail, closeDetail, detailModel, translatedJson,
-      copySlug, copyMsg, setWeekly, resetFilters,
-    };
-  }
-}).mount('#app');
-</script>
+    }).mount('#app');
+  </script>
 </body>
+
 </html>
