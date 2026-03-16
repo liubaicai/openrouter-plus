@@ -108,8 +108,61 @@
     }
 
     .filter-group select.mod-select {
-      width: 80px;
+      width: 110px;
     }
+
+    .multiselect {
+      position: relative;
+      display: inline-block;
+    }
+    .multiselect-btn {
+      border: 1px solid #d0d0d0;
+      border-radius: 3px;
+      padding: 3px 22px 3px 6px;
+      font-size: 12px;
+      background: #fff;
+      color: #1a1a1a;
+      cursor: pointer;
+      min-width: 80px;
+      text-align: left;
+      white-space: nowrap;
+      position: relative;
+    }
+    .multiselect-btn::after {
+      content: '\25BE';
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px;
+      color: #888;
+    }
+    .multiselect-btn:hover { border-color: #888; }
+    .multiselect-drop {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 20;
+      background: #fff;
+      border: 1px solid #d0d0d0;
+      border-radius: 3px;
+      margin-top: 2px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.12);
+      min-width: 100%;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .multiselect-drop label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .multiselect-drop label:hover { background: #f5f5f5; }
+    .multiselect-drop input { cursor: pointer; }
 
     .preset-btns {
       display: flex;
@@ -400,7 +453,7 @@
         <input type="text" v-model="filterSearch" placeholder="搜索..." style="width:160px">
       </div>
       <div class="filter-group">
-        <label>上下文</label>
+        <label>上下文≥</label>
         <select v-model="filterCtxMin">
           <option value="">不限</option>
           <option value="8000">≥8K</option>
@@ -410,30 +463,32 @@
           <option value="200000">≥200K</option>
           <option value="1000000">≥1M</option>
         </select>
-        <span style="color:#999">~</span>
-        <select v-model="filterCtxMax">
-          <option value="">不限</option>
-          <option value="8000">≤8K</option>
-          <option value="32000">≤32K</option>
-          <option value="64000">≤64K</option>
-          <option value="128000">≤128K</option>
-          <option value="200000">≤200K</option>
-          <option value="1000000">≤1M</option>
-        </select>
       </div>
       <div class="filter-group">
         <label>输入模态</label>
-        <select class="mod-select" v-model="filterInputMod">
-          <option value="">全部</option>
-          <option v-for="m in inputModalities" :key="m" :value="m">{{ m }}</option>
-        </select>
+        <div class="multiselect" @click.stop>
+          <button type="button" class="multiselect-btn" @click="showInputModDrop = !showInputModDrop">
+            {{ filterInputMod.length === 0 ? '全部' : filterInputMod.join(', ') }}
+          </button>
+          <div class="multiselect-drop" v-if="showInputModDrop">
+            <label v-for="m in inputModalities" :key="m">
+              <input type="checkbox" :value="m" v-model="filterInputMod">{{ m }}
+            </label>
+          </div>
+        </div>
       </div>
       <div class="filter-group">
         <label>输出模态</label>
-        <select class="mod-select" v-model="filterOutputMod">
-          <option value="">全部</option>
-          <option v-for="m in outputModalities" :key="m" :value="m">{{ m }}</option>
-        </select>
+        <div class="multiselect" @click.stop>
+          <button type="button" class="multiselect-btn" @click="showOutputModDrop = !showOutputModDrop">
+            {{ !filterOutputMod || filterOutputMod.length === 0 ? '全部' : (filterOutputMod.length === outputModalities.length ? '全部' : filterOutputMod.join(', ')) }}
+          </button>
+          <div class="multiselect-drop" v-if="showOutputModDrop">
+            <label v-for="m in outputModalities" :key="m">
+              <input type="checkbox" :value="m" v-model="filterOutputMod">{{ m }}
+            </label>
+          </div>
+        </div>
       </div>
       <div class="filter-group">
         <label>推理</label>
@@ -446,14 +501,6 @@
       <div class="filter-group">
         <label>免费</label>
         <select v-model="filterFree">
-          <option value="">全部</option>
-          <option value="yes">是</option>
-          <option value="no">否</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <label>工具调用</label>
-        <select v-model="filterToolChoice">
           <option value="">全部</option>
           <option value="yes">是</option>
           <option value="no">否</option>
@@ -492,14 +539,14 @@
             <th class="sortable" @click="toggleSort('slug')">
               模型标识<span class="arrow">{{ sortIcon('slug') }}</span>
             </th>
+            <th class="sortable num" @click="toggleSort('weekly_tokens')">
+              周用量<span class="arrow">{{ sortIcon('weekly_tokens') }}</span>
+            </th>
             <th class="sortable num" @click="toggleSort('pricing.prompt')">
               输入价格<span class="arrow">{{ sortIcon('pricing.prompt') }}</span>
             </th>
             <th class="sortable num" @click="toggleSort('pricing.completion')">
               输出价格<span class="arrow">{{ sortIcon('pricing.completion') }}</span>
-            </th>
-            <th class="sortable num" @click="toggleSort('weekly_tokens')">
-              周用量<span class="arrow">{{ sortIcon('weekly_tokens') }}</span>
             </th>
             <th class="sortable num" @click="toggleSort('context_length')">
               上下文长度<span class="arrow">{{ sortIcon('context_length') }}</span>
@@ -523,9 +570,9 @@
             <td><span class="cell-ellipsis" :title="m.name">{{ m.name }}</span></td>
             <td><span class="cell-ellipsis slug-copy" @click="copySlug(m._displaySlug)"
                 :title="m._displaySlug + '（点击复制）'">{{ m._displaySlug }}</span></td>
+            <td class="num">{{ formatTokens(m._weeklyTokens) }}</td>
             <td class="num">{{ formatPrice(m._promptPrice) }}</td>
             <td class="num">{{ formatPrice(m._completionPrice) }}</td>
-            <td class="num">{{ formatTokens(m._weeklyTokens) }}</td>
             <td class="num">{{ formatCtx(m.context_length) }}</td>
             <td>
               <span v-for="mod in m._inputModDisplay" :key="mod" :class="'tag tag-' + (tagClass[mod] || 'default')">{{
@@ -657,9 +704,9 @@
         const SORT_STORAGE_KEY = 'or-sort';
 
         const defaults = {
-          filterSearch: '', filterInputMod: '', filterOutputMod: '',
-          filterReasoning: '', filterFree: '', filterToolChoice: '',
-          filterAvailable: 'yes', filterCtxMin: '', filterCtxMax: '', filterWeeklyRaw: '',
+          filterSearch: '', filterInputMod: [], filterOutputMod: [],
+          filterReasoning: '', filterFree: '',
+          filterAvailable: 'yes', filterCtxMin: '', filterWeeklyRaw: '',
         };
         const savedSort = (() => { try { return JSON.parse(localStorage.getItem(SORT_STORAGE_KEY)) || {}; } catch { return {}; } })();
         const saved = (() => { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; } })();
@@ -669,15 +716,16 @@
         const sortDir = ref(savedSort.sortDir || 'desc');
 
         const filterSearch = ref(init('filterSearch'));
-        const filterInputMod = ref(init('filterInputMod'));
-        const filterOutputMod = ref(init('filterOutputMod'));
+        const filterInputMod = ref(init('filterInputMod') || []);
+        const filterOutputMod = ref(init('filterOutputMod') || []);
         const filterReasoning = ref(init('filterReasoning'));
         const filterFree = ref(init('filterFree'));
-        const filterToolChoice = ref(init('filterToolChoice'));
         const filterAvailable = ref(init('filterAvailable'));
         const filterCtxMin = ref(init('filterCtxMin'));
-        const filterCtxMax = ref(init('filterCtxMax'));
         const filterWeeklyRaw = ref(init('filterWeeklyRaw'));
+
+        const showInputModDrop = ref(false);
+        const showOutputModDrop = ref(false);
 
         const copyMsg = ref('');
         let copyTimer = null;
@@ -737,27 +785,21 @@
             const q = filterSearch.value.toLowerCase();
             list = list.filter(m => m.name.toLowerCase().includes(q) || m.slug.toLowerCase().includes(q) || m._displaySlug.toLowerCase().includes(q));
           }
-          if (filterInputMod.value) {
-            list = list.filter(m => m.input_modalities?.includes(filterInputMod.value));
+          if (filterInputMod.value.length > 0) {
+            list = list.filter(m => filterInputMod.value.some(mod => m.input_modalities?.includes(mod)));
           }
-          if (filterOutputMod.value) {
-            list = list.filter(m => m.output_modalities?.includes(filterOutputMod.value));
+          if (filterOutputMod.value && filterOutputMod.value.length > 0) {
+            list = list.filter(m => filterOutputMod.value.some(mod => m.output_modalities?.includes(mod)));
           }
           if (filterReasoning.value === 'yes') list = list.filter(m => m.supports_reasoning);
           else if (filterReasoning.value === 'no') list = list.filter(m => !m.supports_reasoning);
           if (filterFree.value === 'yes') list = list.filter(m => m._isFree);
           else if (filterFree.value === 'no') list = list.filter(m => !m._isFree);
-          if (filterToolChoice.value === 'yes') list = list.filter(m => m._supportsToolChoice);
-          else if (filterToolChoice.value === 'no') list = list.filter(m => !m._supportsToolChoice);
           if (filterAvailable.value === 'yes') list = list.filter(m => m._available);
           else if (filterAvailable.value === 'no') list = list.filter(m => !m._available);
           if (filterCtxMin.value) {
             const min = parseInt(filterCtxMin.value);
             list = list.filter(m => (m.context_length || 0) >= min);
-          }
-          if (filterCtxMax.value) {
-            const max = parseInt(filterCtxMax.value);
-            list = list.filter(m => (m.context_length || 0) <= max);
           }
 
           const weeklyMin = parseTokenValue(filterWeeklyRaw.value);
@@ -857,14 +899,11 @@
 
         function resetFilters() {
           filterSearch.value = '';
-          filterInputMod.value = '';
-          filterOutputMod.value = '';
-          filterReasoning.value = '';
+          filterInputMod.value = [];
+          filterOutputMod.value = [];
           filterFree.value = '';
-          filterToolChoice.value = '';
           filterAvailable.value = 'yes';
           filterCtxMin.value = '';
-          filterCtxMax.value = '';
           filterWeeklyRaw.value = '';
           localStorage.removeItem(STORAGE_KEY);
           localStorage.removeItem(SORT_STORAGE_KEY);
@@ -873,15 +912,19 @@
         }
 
         onMounted(async () => {
+          document.addEventListener('click', () => {
+            showInputModDrop.value = false;
+            showOutputModDrop.value = false;
+          });
           watch([filterSearch, filterInputMod, filterOutputMod,
-            filterReasoning, filterFree, filterToolChoice, filterAvailable,
-            filterCtxMin, filterCtxMax, filterWeeklyRaw], () => {
+            filterReasoning, filterFree, filterAvailable,
+            filterCtxMin, filterWeeklyRaw], () => {
               localStorage.setItem(STORAGE_KEY, JSON.stringify({
                 filterSearch: filterSearch.value,
                 filterInputMod: filterInputMod.value, filterOutputMod: filterOutputMod.value,
                 filterReasoning: filterReasoning.value, filterFree: filterFree.value,
-                filterToolChoice: filterToolChoice.value, filterAvailable: filterAvailable.value,
-                filterCtxMin: filterCtxMin.value, filterCtxMax: filterCtxMax.value,
+                filterAvailable: filterAvailable.value,
+                filterCtxMin: filterCtxMin.value,
                 filterWeeklyRaw: filterWeeklyRaw.value,
               }));
             });
@@ -898,6 +941,9 @@
             if (json.error) throw new Error(json.error);
             models.value = json.data?.models || [];
             analytics.value = json.data?.analytics || {};
+            if (filterOutputMod.value === null) {
+              filterOutputMod.value = [];
+            }
           } catch (e) {
             error.value = e.message;
           } finally {
@@ -909,8 +955,9 @@
           models, loading, error, tagClass,
           sortKey, sortDir, toggleSort, sortIcon,
           filterSearch, filterInputMod, filterOutputMod,
-          filterReasoning, filterFree, filterToolChoice, filterAvailable,
-          filterCtxMin, filterCtxMax, filterWeeklyRaw,
+          filterReasoning, filterFree, filterAvailable,
+          filterCtxMin, filterWeeklyRaw,
+          showInputModDrop, showOutputModDrop,
           filteredModels, inputModalities, outputModalities,
           formatTokens, formatPrice, formatCtx, formatDate,
           showDetail, closeDetail, detailModel, translatedJson,
