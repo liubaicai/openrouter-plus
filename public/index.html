@@ -334,6 +334,12 @@
           <th class="sortable" @click="toggleSort('slug')">
             模型标识<span class="arrow">{{ sortIcon('slug') }}</span>
           </th>
+          <th class="sortable num" @click="toggleSort('pricing.prompt')">
+            输入价格<span class="arrow">{{ sortIcon('pricing.prompt') }}</span>
+          </th>
+          <th class="sortable num" @click="toggleSort('pricing.completion')">
+            输出价格<span class="arrow">{{ sortIcon('pricing.completion') }}</span>
+          </th>
           <th class="sortable num" @click="toggleSort('weekly_tokens')">
             周用量<span class="arrow">{{ sortIcon('weekly_tokens') }}</span>
           </th>
@@ -344,12 +350,6 @@
           <th>输出模态</th>
           <th>推理</th>
           <th>免费</th>
-          <th class="sortable num" @click="toggleSort('pricing.prompt')">
-            输入价格<span class="arrow">{{ sortIcon('pricing.prompt') }}</span>
-          </th>
-          <th class="sortable num" @click="toggleSort('pricing.completion')">
-            输出价格<span class="arrow">{{ sortIcon('pricing.completion') }}</span>
-          </th>
           <th>工具调用</th>
           <th class="sortable" @click="toggleSort('created_at')">
             创建时间<span class="arrow">{{ sortIcon('created_at') }}</span>
@@ -367,14 +367,14 @@
           <td>
             <span class="slug-copy" @click="copySlug(m._displaySlug)" :title="'点击复制 ' + m._displaySlug">{{ m._displaySlug }}</span>
           </td>
+          <td class="num">{{ formatPrice(m._promptPrice) }}</td>
+          <td class="num">{{ formatPrice(m._completionPrice) }}</td>
           <td class="num">{{ formatTokens(m._weeklyTokens) }}</td>
           <td class="num">{{ formatCtx(m.context_length) }}</td>
           <td><span v-for="mod in m.input_modalities" :key="mod" :class="'tag tag-' + (tagClass[mod] || 'default')">{{ mod }}</span></td>
           <td><span v-for="mod in m.output_modalities" :key="mod" :class="'tag tag-' + (tagClass[mod] || 'default')">{{ mod }}</span></td>
           <td class="center"><span :class="m.supports_reasoning ? 'bool-y' : 'bool-n'">{{ m.supports_reasoning ? '✓' : '-' }}</span></td>
           <td class="center"><span :class="m._isFree ? 'bool-y' : 'bool-n'">{{ m._isFree ? '✓' : '-' }}</span></td>
-          <td class="num">{{ formatPrice(m._promptPrice) }}</td>
-          <td class="num">{{ formatPrice(m._completionPrice) }}</td>
           <td class="center"><span :class="m._supportsToolChoice ? 'bool-y' : 'bool-n'">{{ m._supportsToolChoice ? '✓' : '-' }}</span></td>
           <td>{{ formatDate(m.created_at) }}</td>
           <td>{{ formatDate(m.updated_at) }}</td>
