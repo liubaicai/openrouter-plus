@@ -379,12 +379,91 @@
       flex: 1;
     }
 
-    .modal-body pre {
+    .json-tree {
       font-family: "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
       font-size: 12px;
-      line-height: 1.5;
-      white-space: pre-wrap;
+      line-height: 1.7;
+    }
+
+    .jt-node { display: contents; }
+
+    .jt-line {
+      display: flex;
+      align-items: baseline;
+    }
+
+    .jt-ch {
+      padding-left: 20px;
+      border-left: 1px solid #f0f0f0;
+      margin-left: 6px;
+    }
+
+    .jt-tog {
+      width: 14px;
+      text-align: center;
+      cursor: pointer;
+      color: #bbb;
+      font-size: 10px;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .jt-tog:hover {
+      color: #333;
+    }
+
+    .jt-spc {
+      display: inline-block;
+      width: 14px;
+      flex-shrink: 0;
+    }
+
+    .jt-key {
+      color: #881280;
+      white-space: nowrap;
+    }
+
+    .jt-p {
+      color: #666;
+      margin-right: 4px;
+    }
+
+    .jt-b {
+      color: #666;
+      font-weight: 600;
+    }
+
+    .jt-dots {
+      color: #999;
+      cursor: pointer;
+      font-size: 11px;
+      margin: 0 2px;
+    }
+
+    .jt-dots:hover {
+      color: #333;
+    }
+
+    .jt-v {
       word-break: break-all;
+      white-space: pre-wrap;
+    }
+
+    .jt-string {
+      color: #1a7f37;
+    }
+
+    .jt-number {
+      color: #0550ae;
+    }
+
+    .jt-boolean {
+      color: #6f42c1;
+    }
+
+    .jt-null {
+      color: #999;
+      font-style: italic;
     }
 
     .loading,
@@ -600,10 +679,15 @@
       <div class="modal">
         <div class="modal-header">
           <span>{{ detailModel.name }}</span>
-          <button class="modal-close" @click="closeDetail">&times;</button>
+          <div>
+            <button class="btn-detail" @click="copyJson" style="margin-right:8px">复制</button>
+            <button class="modal-close" @click="closeDetail">&times;</button>
+          </div>
         </div>
         <div class="modal-body">
-          <pre>{{ translatedJson }}</pre>
+          <div class="json-tree">
+            <json-node :value="translatedObj" :depth="0"></json-node>
+          </div>
         </div>
       </div>
     </div>
@@ -662,6 +746,19 @@
       literal_auto: '支持auto', literal_required: '支持required',
       type_function: '支持function类型', provider_region: '供应商区域',
       deprecation_date: '弃用日期',
+      author_display_name: '作者显示名', top_k: 'Top-K',
+      presence_penalty: '存在惩罚', repetition_penalty: '重复惩罚',
+      knowledge_cutoff: '知识截止日期', supported_tts_voices: '支持的TTS语音',
+      termsOfServiceURL: '服务条款URL', privacyPolicyURL: '隐私政策URL',
+      headquarters: '总部', display_pricing: '展示定价',
+      kind: '类型', sku_label: 'SKU标签', price: '价格',
+      displayMultiplier: '展示倍数', unitLabel: '单位', tiers: '价格梯度',
+      supported_video_parameters: '支持的视频参数',
+      supported_resolutions: '支持的分辨率', supported_aspect_ratios: '支持的宽高比',
+      supported_sizes: '支持的尺寸', supported_durations: '支持的时长',
+      supported_frame_images: '支持的帧图像', generate_audio: '生成音频', seed: '随机种子',
+      allowed_passthrough_parameters: '允许透传的参数',
+      watermark: '水印', req_key: '请求密钥',
     };
 
     function translateObj(obj) {
@@ -693,7 +790,7 @@
       }
     }
 
-    createApp({
+    const app = createApp({
       setup() {
         const models = ref([]);
         const analytics = ref({});
@@ -886,6 +983,18 @@
           return JSON.stringify(translateObj(detailModel.value), null, 2);
         });
 
+        const translatedObj = computed(() => {
+          if (!detailModel.value) return null;
+          return translateObj(detailModel.value);
+        });
+
+        function copyJson() {
+          navigator.clipboard.writeText(translatedJson.value);
+          copyMsg.value = '已复制 JSON';
+          clearTimeout(copyTimer);
+          copyTimer = setTimeout(() => { copyMsg.value = ''; }, 1500);
+        }
+
         function copySlug(slug) {
           navigator.clipboard.writeText(slug);
           copyMsg.value = '已复制: ' + slug;
@@ -960,11 +1069,67 @@
           showInputModDrop, showOutputModDrop,
           filteredModels, inputModalities, outputModalities,
           formatTokens, formatPrice, formatCtx, formatDate,
-          showDetail, closeDetail, detailModel, translatedJson,
-          copySlug, copyMsg, setWeekly, resetFilters,
+          showDetail, closeDetail, detailModel, translatedJson, translatedObj,
+          copySlug, copyJson, copyMsg, setWeekly, resetFilters,
         };
       }
-    }).mount('#app');
+    });
+
+    app.component('json-node', {
+      name: 'json-node',
+      props: {
+        value: {},
+        keyName: { default: undefined },
+        depth: { type: Number, default: 0 },
+      },
+      data() {
+        return { open: this.depth < 2 };
+      },
+      computed: {
+        isObject() { return this.value !== null && typeof this.value === 'object' && !Array.isArray(this.value); },
+        isArray() { return Array.isArray(this.value); },
+        isContainer() { return this.isObject || this.isArray; },
+        entries() {
+          if (this.isObject) return Object.entries(this.value);
+          if (this.isArray) return this.value.map((v, i) => [i, v]);
+          return [];
+        },
+        bracket() { return this.isArray ? ['[', ']'] : ['{', '}']; },
+        valType() {
+          if (this.value === null || this.value === undefined) return 'null';
+          return typeof this.value;
+        },
+        displayVal() {
+          if (this.value === null || this.value === undefined) return 'null';
+          if (typeof this.value === 'string') return '"' + this.value + '"';
+          return String(this.value);
+        },
+      },
+      template: `
+        <div v-if="isContainer" class="jt-node">
+          <div class="jt-line">
+            <span class="jt-tog" @click="open=!open">{{ open ? '▾' : '▸' }}</span>
+            <span class="jt-key" v-if="keyName!=null">{{ keyName }}<span class="jt-p">: </span></span>
+            <span class="jt-b">{{ bracket[0] }}</span>
+            <template v-if="!open">
+              <span class="jt-dots" @click="open=true">&nbsp;…{{ entries.length }}&nbsp;</span>
+              <span class="jt-b">{{ bracket[1] }}</span>
+            </template>
+          </div>
+          <div class="jt-ch" v-if="open">
+            <json-node v-for="([k,v],i) in entries" :key="k" :value="v" :key-name="isArray?undefined:String(k)" :depth="depth+1" />
+          </div>
+          <div class="jt-line" v-if="open"><span class="jt-spc"></span><span class="jt-b">{{ bracket[1] }}</span></div>
+        </div>
+        <div v-else class="jt-line">
+          <span class="jt-spc"></span>
+          <span class="jt-key" v-if="keyName!=null">{{ keyName }}<span class="jt-p">: </span></span>
+          <span :class="'jt-v jt-'+valType">{{ displayVal }}</span>
+        </div>
+      `
+    });
+
+    app.mount('#app');
   </script>
 </body>
 
