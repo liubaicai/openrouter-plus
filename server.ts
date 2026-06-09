@@ -27,7 +27,7 @@ app.get('/api/models', async (_req, res) => {
 
   try {
     const resp = await fetch(
-      'https://openrouter.ai/api/frontend/models/find?order=newest'
+      'https://openrouter.ai/api/frontend/v1/models/find?order=newest'
     );
     if (!resp.ok) throw new Error(`API responded ${resp.status}`);
 

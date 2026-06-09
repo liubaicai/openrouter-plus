@@ -9,7 +9,7 @@ export default async function handler(_req: VercelRequest, res: VercelResponse) 
     const now = Date.now();
     if (!cache.data || now - cache.time > CACHE_TTL) {
       const resp = await fetch(
-        'https://openrouter.ai/api/frontend/models/find?order=newest'
+        'https://openrouter.ai/api/frontend/v1/models/find?order=newest'
       );
       if (!resp.ok) throw new Error(`API responded ${resp.status}`);
       cache.data = (await resp.json()) as Resp;
